@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Maya — Ekosistem Hutan | Fase C</title>
+<style>
+:root{
+  --green:#1f6f43;--green2:#2f8b57;--light:#eef8f0;--cream:#fffaf0;
+  --brown:#6d4c41;--yellow:#f4c95d;--blue:#4f9bd5;--red:#d85b55;
+  --ink:#18352a;--shadow:0 10px 28px rgba(22,66,43,.12);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#dff0df;color:var(--ink)}
+.app{min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(120deg,#155b38,#2f8b57);color:white;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}.logo{font-size:34px}.brand h1{margin:0;font-size:21px}.brand small{opacity:.85}
+#reset{border:0;background:#fff;color:var(--green);font-weight:800;padding:10px 15px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow)}
+nav{display:flex;gap:5px;background:#124a2f;padding:7px 12px;overflow-x:auto}
+nav button{border:0;min-height:42px;background:transparent;color:#dff5e6;padding:10px 15px;border-radius:9px;font-weight:700;cursor:pointer;white-space:nowrap}
+nav button.active,nav button:hover{background:#fff;color:var(--green)}
+main{flex:1;padding:16px;max-width:1400px;width:100%;margin:auto}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:15px}
+.card{background:#fff;border-radius:15px;padding:17px;box-shadow:var(--shadow);margin-bottom:15px}
+.card h2,.card h3{margin-top:0}.muted{color:#60766a}
+.hero{background:linear-gradient(135deg,#e9f7e9,#fff);border-left:7px solid var(--green)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:7px 10px;background:#edf7ef;border-radius:99px;font-size:13px;font-weight:700}
+ul{line-height:1.65}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{padding:12px;background:#f4faf5;border-radius:12px;border:1px solid #d9eadc}.step b{display:block;color:var(--green);margin-bottom:5px}
+.forest{position:relative;height:380px;border-radius:16px;overflow:hidden;background:linear-gradient(#9ed5ef 0 37%,#6ebd69 37% 70%,#4f9b52 70%);border:4px solid #e2eee3}
+.sun{position:absolute;right:30px;top:22px;width:62px;height:62px;background:#ffd76b;border-radius:50%}
+.mountain{position:absolute;bottom:130px;left:0;width:0;height:0;border-left:180px solid transparent;border-right:180px solid transparent;border-bottom:155px solid #679b72}
+.mountain.m2{left:240px;border-left-width:230px;border-right-width:230px;border-bottom-color:#548b64}
+.ground{position:absolute;bottom:0;height:125px;width:100%;background:#6b4b35}
+.tree{position:absolute;bottom:85px;width:18px;height:115px;background:#66432f;border-radius:8px}.tree:before{content:"";position:absolute;left:-42px;top:-75px;width:100px;height:100px;background:#287047;border-radius:50%;box-shadow:38px 15px #338253,-35px 20px #2c7a4c}
+.t1{left:9%}.t2{left:28%;transform:scale(1.2)}.t3{left:51%;transform:scale(.9)}.t4{left:74%;transform:scale(1.3)}.t5{left:89%;transform:scale(.8)}
+.organism{position:absolute;border:0;background:transparent;font-size:30px;cursor:pointer;z-index:5;transition:.2s}.organism:hover{transform:scale(1.25)}
+.o1{left:20%;bottom:34px}.o2{left:44%;bottom:30px}.o3{left:62%;bottom:55px}.o4{left:79%;bottom:35px}.o5{left:35%;bottom:72px}.o6{left:12%;bottom:100px}
+.info{background:#f7fbf7;border-radius:12px;padding:12px;min-height:100px}
+.control{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.control button{border:0;border-radius:9px;padding:9px 12px;background:var(--green);color:white;font-weight:700;cursor:pointer}.control button.secondary{background:#e9f2eb;color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:#f3f8f3;padding:10px;border-radius:10px;text-align:center}.stat strong{font-size:22px;display:block;color:var(--green)}
+.bar{height:14px;background:#e7eee8;border-radius:20px;overflow:hidden}.fill{height:100%;width:70%;background:var(--green);transition:.4s}
+select,input,textarea{width:100%;padding:10px;border:1px solid #cbdccf;border-radius:9px;background:white;font:inherit}
+textarea{min-height:90px;resize:vertical}
+.question{padding:12px;background:#fbfcf9;border:1px solid #e2e9e1;border-radius:10px;margin:10px 0}
+.feedback{font-weight:700;margin-top:8px}.correct{color:#1f7a45}.wrong{color:#b3443e}
+.badge{display:inline-block;padding:4px 8px;border-radius:7px;background:#fff0b8;color:#765600;font-size:12px;font-weight:800}
+footer{text-align:center;padding:10px;color:#557062;font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.forest{height:320px}}
+@media(max-width:560px){.steps{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.brand h1{font-size:17px}}
+</style>
+<style>
+.biotic-game{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.game-items,.game-targets{display:grid;gap:9px}
+.game-item{padding:12px 14px;background:#f7fbf7;border:3px solid #cfe1d2;border-radius:10px;cursor:pointer;font-weight:700;user-select:none;touch-action:manipulation;transition:.2s}
+.game-item.selected{border-color:#f0b83d;background:#fff7d8;transform:scale(1.02)}
+.game-item.correct{border-color:#35a45b;background:#eaf8ed}
+.game-item.wrong{border-color:#d85b55;background:#fff0ef}
+.target{min-height:145px;padding:14px;border:3px dashed #a9c8ae;border-radius:14px;background:#f8fcf8;text-align:center;cursor:pointer;touch-action:manipulation;transition:.2s}
+.target h3{margin:4px 0 6px}.target.selected-target{background:#eef8ef;border-color:#2f8b57;transform:scale(1.02)}
+.game-result{font-weight:800;margin-top:10px}
+.line-help{background:#eef8f0;padding:10px;border-radius:9px;margin:10px 0;font-size:14px}
+@media(max-width:700px){.biotic-game{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">🌳</div><div><h1>LAB MAYA: EKOSISTEM HUTAN</h1><small>Fase C • IPA • Eksplorasi interaktif</small></div></div>
+  <button id="reset" onclick="resetLab()">↻ Reset Lab</button>
+</header>
+<nav>
+ <button class="active" onclick="showTab('teori',this)">📚 Teori</button>
+ <button onclick="showTab('prosedur',this)">🧭 Prosedur</button>
+ <button onclick="showTab('simulasi',this)">🔬 Simulasi</button>
+ <button onclick="showTab('lkpd',this)">📝 LKPD</button>
+ <button onclick="showTab('game',this)">🎮 Game</button><button onclick="showTab('pengembangan',this)">🚀 Pengembangan</button>
+</nav>
+<main>
+<section id="teori" class="tab active">
+ <div class="card hero">
+  <span class="badge">TUJUAN PEMBELAJARAN</span>
+  <h2>Bagaimana makhluk hidup saling berinteraksi di hutan?</h2>
+  <p>Ekosistem hutan terdiri atas <b>komponen biotik</b> (tumbuhan, hewan, jamur, mikroorganisme) dan <b>abiotik</b> (cahaya, air, tanah, udara, suhu). Keduanya saling memengaruhi.</p>
+  <div class="chips"><span class="chip">🌱 Produsen</span><span class="chip">🐛 Konsumen I</span><span class="chip">🦊 Konsumen II</span><span class="chip">🍄 Pengurai</span><span class="chip">☀️ Abiotik</span></div>
+ </div>
+ <div class="grid">
+  <div class="card"><h3>Rantai Makanan</h3><p>Contoh: <b>rumput → belalang → katak → ular → elang</b>.</p><p>Panah menunjukkan arah perpindahan energi dari makanan menuju pemakannya.</p></div>
+  <div class="card"><h3>Jaring-jaring Makanan</h3><p>Di alam, satu organisme dapat memiliki lebih dari satu sumber makanan atau pemangsa sehingga terbentuk hubungan yang saling terhubung.</p></div>
+ </div>
+ <div class="card"><h3>Keseimbangan Ekosistem</h3><p>Jika satu populasi berubah drastis, populasi lain dapat ikut berubah. Pengurai membantu mengembalikan unsur hara ke tanah.</p></div>
+</section>
+
+<section id="prosedur" class="tab">
+ <div class="card"><h2>🧭 Prosedur Eksplorasi</h2>
+ <div class="steps">
+  <div class="step"><b>1. Amati</b>Kenali organisme dan komponen abiotik pada hutan maya.</div>
+  <div class="step"><b>2. Klik</b>Pilih organisme untuk melihat perannya dalam ekosistem.</div>
+  <div class="step"><b>3. Ubah</b>Gunakan kontrol simulasi untuk mengubah jumlah organisme.</div>
+  <div class="step"><b>4. Analisis</b>Catat perubahan dan buat kesimpulan pada LKPD.</div>
+ </div></div>
+ <div class="card"><h3>Aturan Keselamatan Digital</h3><ul><li>Gunakan simulasi sesuai petunjuk.</li><li>Jangan menghapus data jawaban sebelum selesai.</li><li>Diskusikan hasil pengamatan dengan teman.</li></ul></div>
+</section>
+
+<section id="simulasi" class="tab">
+ <div class="grid">
+  <div class="card">
+   <h2>🔬 Hutan Interaktif</h2>
+   <p class="muted">Klik organisme untuk mempelajari perannya.</p>
+   <div class="forest" id="forest">
+    <div class="sun"></div><div class="mountain"></div><div class="mountain m2"></div>
+    <div class="tree t1"></div><div class="tree t2"></div><div class="tree t3"></div><div class="tree t4"></div><div class="tree t5"></div>
+    <button class="organism o1" onclick="inspect('🌿 Tumbuhan','Produsen','Membuat makanan sendiri melalui fotosintesis.')">🌿</button>
+    <button class="organism o2" onclick="inspect('🐛 Belalang','Konsumen I','Memakan tumbuhan; menjadi makanan bagi hewan lain.')">🐛</button>
+    <button class="organism o3" onclick="inspect('🐸 Katak','Konsumen II','Memakan serangga dan dapat dimangsa ular.')">🐸</button>
+    <button class="organism o4" onclick="inspect('🦅 Elang','Konsumen tingkat tinggi','Pemangsa yang membantu mengendalikan populasi mangsa.')">🦅</button>
+    <button class="organism o5" onclick="inspect('🍄 Jamur','Pengurai','Menguraikan sisa makhluk hidup dan membantu mengembalikan unsur hara.')">🍄</button>
+    <button class="organism o6" onclick="inspect('💧 Air','Komponen abiotik','Dibutuhkan makhluk hidup untuk berbagai proses kehidupan.')">💧</button>
+   </div>
+  </div>
+  <div class="card">
+   <h3>🔎 Panel Pengamatan</h3><div id="inspect" class="info">Pilih objek di hutan untuk melihat keterangannya.</div>
+   <h3>⚙️ Uji Perubahan Populasi</h3>
+   <label>Jumlah tumbuhan: <b id="plantVal">70</b></label><input id="plant" type="range" min="10" max="100" value="70" oninput="simulate()">
+   <label>Jumlah herbivor: <b id="herbVal">50</b></label><input id="herb" type="range" min="10" max="100" value="50" oninput="simulate()">
+   <label>Jumlah predator: <b id="predVal">30</b></label><input id="pred" type="range" min="10" max="100" value="30" oninput="simulate()">
+   <div class="stats"><div class="stat">🌱<strong id="s1">70</strong>Produsen</div><div class="stat">🐛<strong id="s2">50</strong>Herbivor</div><div class="stat">🦅<strong id="s3">30</strong>Predator</div></div>
+   <p><b>Indeks keseimbangan:</b></p><div class="bar"><div id="balance" class="fill"></div></div>
+   <div class="control"><button class="secondary" onclick="preset('hujan')">🌧️ Musim Hujan</button><button class="secondary" onclick="preset('kering')">☀️ Musim Kering</button></div>
+   <p id="simNote" class="muted">Populasi relatif seimbang. Amati apa yang terjadi jika salah satu komponen berubah.</p>
+  </div>
+ </div>
+</section>
+
+<section id="lkpd" class="tab">
+ <div class="card"><h2>📝 LKPD — Investigasi Ekosistem Hutan</h2>
+  <p><b>Nama:</b> <input id="nama" placeholder="Tuliskan nama"></p>
+  <div class="question"><b>1. Sebutkan dua komponen biotik dan dua komponen abiotik yang kamu temukan.</b><textarea id="q1" placeholder="Jawabanmu..."></textarea></div>
+  <div class="question"><b>2. Susun satu rantai makanan dari organisme yang tersedia.</b><input id="q2" placeholder="Contoh format: A → B → C"></div>
+  <div class="question"><b>3. Jika jumlah tumbuhan menurun, apa yang mungkin terjadi pada herbivor?</b><textarea id="q3" placeholder="Jelaskan alasanmu..."></textarea></div>
+  <div class="question"><b>4. Mengapa pengurai penting bagi ekosistem?</b><textarea id="q4" placeholder="Jawabanmu..."></textarea></div>
+  <button class="control" onclick="saveLKPD()" style="border:0;background:var(--green);color:white;padding:10px 15px;border-radius:9px;font-weight:700;cursor:pointer">💾 Simpan Jawaban</button>
+  <span id="saveMsg" class="feedback"></span>
+ </div>
+ <div class="card"><h3>💡 Refleksi</h3><textarea id="ref" placeholder="Hal baru yang saya pahami..."></textarea></div>
+</section>
+
+
+
+<section id="game" class="tab">
+ <div class="card">
+  <h2>🎮 Game Tarik Garis: Biotik atau Abiotik?</h2>
+  <p>Pilih satu objek, lalu pilih kelompok <b>BIOTIK</b> atau <b>ABIOTIK</b>. Pada HP, cukup <b>ketuk</b>—tidak perlu menarik dengan mouse.</p>
+  <div class="line-help">👉 <b>Cara bermain:</b> Ketuk objek → ketuk kotak jawabannya → lanjutkan sampai semua objek terkelompok.</div>
+  <div class="biotic-game">
+   <div>
+    <h3>🔹 Objek Hutan</h3>
+    <div id="gameItems" class="game-items">
+     <div class="game-item" data-answer="biotik" onclick="selectGameItem(this)">🌳 Pohon</div>
+     <div class="game-item" data-answer="abiotik" onclick="selectGameItem(this)">☀️ Cahaya matahari</div>
+     <div class="game-item" data-answer="biotik" onclick="selectGameItem(this)">🦅 Elang</div>
+     <div class="game-item" data-answer="abiotik" onclick="selectGameItem(this)">💧 Air</div>
+     <div class="game-item" data-answer="biotik" onclick="selectGameItem(this)">🍄 Jamur</div>
+     <div class="game-item" data-answer="abiotik" onclick="selectGameItem(this)">🪨 Batu</div>
+     <div class="game-item" data-answer="biotik" onclick="selectGameItem(this)">🐸 Katak</div>
+     <div class="game-item" data-answer="abiotik" onclick="selectGameItem(this)">🌡️ Suhu</div>
+    </div>
+   </div>
+   <div>
+    <h3>🔸 Hubungkan ke</h3>
+    <div class="game-targets">
+     <div class="target" data-target="biotik" onclick="chooseTarget(this)"><h3>🌱 BIOTIK</h3><p>Makhluk hidup</p></div>
+     <div class="target" data-target="abiotik" onclick="chooseTarget(this)"><h3>☀️ ABIOTIK</h3><p>Benda/faktor tak hidup</p></div>
+    </div>
+    <div id="gameResult" class="game-result"></div>
+    <div class="control">
+      <button onclick="checkGame()">✅ Periksa Jawaban</button>
+      <button class="secondary" onclick="resetGame()">↻ Reset Game</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
+
+<section id="pengembangan" class="tab">
+ <div class="card"><h2>🚀 Pengembangan / Tantangan</h2>
+  <p>Pilih satu misi untuk memperluas penyelidikanmu.</p>
+  <div class="steps">
+   <div class="step"><b>Misi 1 — Penebangan</b>Turunkan jumlah tumbuhan. Prediksi perubahan herbivor dan predator.</div>
+   <div class="step"><b>Misi 2 — Kekeringan</b>Gunakan preset musim kering. Bandingkan dengan kondisi normal.</div>
+   <div class="step"><b>Misi 3 — Jaring Makanan</b>Gambar hubungan makan minimal 5 organisme pada buku/LKPD.</div>
+   <div class="step"><b>Misi 4 — Aksi</b>Rancang 3 tindakan manusia yang membantu menjaga ekosistem hutan.</div>
+  </div>
+ </div>
+ <div class="card"><h3>🏆 Cek Pemahaman</h3>
+  <div class="question"><b>Organisme yang membuat makanan sendiri disebut...</b>
+   <select id="quiz"><option value="">Pilih jawaban</option><option>Produsen</option><option>Konsumen</option><option>Pengurai</option></select>
+   <button onclick="checkQuiz()" style="margin-top:8px;border:0;background:var(--green);color:#fff;padding:9px 13px;border-radius:8px;font-weight:700">Periksa</button>
+   <div id="quizMsg" class="feedback"></div>
+  </div>
+ </div>
+</section>
+</main>
+<footer>Lab Maya Ekosistem Hutan • Fase C • Dirancang untuk eksplorasi, pengamatan, dan refleksi. • <b style="font-size:14px;color:#1f6f43">by aizz</b></footer>
+</div>
+<script>
+function showTab(id,btn){
+ document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+ var target=document.getElementById(id);
+ if(target) target.classList.add('active');
+ document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('active')});
+ if(btn) btn.classList.add('active');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function inspect(name,role,desc){
+ document.getElementById('inspect').innerHTML='<b>'+name+'</b><br><span class="badge">'+role+'</span><p>'+desc+'</p>';
+}
+function simulate(){
+ var p=+document.getElementById('plant').value;
+ var h=+document.getElementById('herb').value;
+ var r=+document.getElementById('pred').value;
+ document.getElementById('plantVal').textContent=p;
+ document.getElementById('herbVal').textContent=h;
+ document.getElementById('predVal').textContent=r;
+ document.getElementById('s1').textContent=p;
+ document.getElementById('s2').textContent=h;
+ document.getElementById('s3').textContent=r;
+ var balance=Math.max(0,100-Math.round(Math.abs(p-h)*.55)-Math.round(Math.abs(h-r)*.35));
+ document.getElementById('balance').style.width=balance+'%';
+ document.getElementById('simNote').textContent=balance>75?'Populasi relatif seimbang. Amati apa yang terjadi jika salah satu komponen berubah.':balance>45?'Terjadi ketidakseimbangan sedang. Perubahan satu populasi dapat memengaruhi populasi lain.':'Ketidakseimbangan tinggi. Diskusikan dampaknya terhadap rantai makanan dan sumber daya.';
+}
+function preset(type){
+ if(type==='hujan') setVals(85,55,35);
+ else setVals(35,60,20);
+ simulate();
+}
+function setVals(p,h,r){
+ document.getElementById('plant').value=p;
+ document.getElementById('herb').value=h;
+ document.getElementById('pred').value=r;
+}
+function saveLKPD(){
+ document.getElementById('saveMsg').textContent='✓ Jawaban tersimpan di halaman ini selama sesi berlangsung.';
+ document.getElementById('saveMsg').className='feedback correct';
+}
+function checkQuiz(){
+ var v=document.getElementById('quiz').value;
+ var m=document.getElementById('quizMsg');
+ m.textContent=v==='Produsen'?'✓ Tepat! Produsen membuat makanan sendiri.':'Coba lagi. Ingat, tumbuhan hijau dapat membuat makanan melalui fotosintesis.';
+ m.className='feedback '+(v==='Produsen'?'correct':'wrong');
+}
+var selectedGameItem=null;
+function selectGameItem(item){
+ document.querySelectorAll('.game-item').forEach(function(x){x.classList.remove('selected')});
+ selectedGameItem=item;
+ item.classList.add('selected');
+ document.querySelectorAll('.target').forEach(function(x){x.classList.remove('selected-target')});
+ document.getElementById('gameResult').textContent='Sekarang pilih BIOTIK atau ABIOTIK.';
+ document.getElementById('gameResult').className='game-result';
+}
+function chooseTarget(target){
+ if(!selectedGameItem){
+  document.getElementById('gameResult').textContent='👉 Pilih objek terlebih dahulu.';
+  document.getElementById('gameResult').className='game-result wrong';
+  return;
+ }
+ selectedGameItem.dataset.placed=target.dataset.target;
+ selectedGameItem.classList.remove('selected');
+ selectedGameItem.classList.add('placed');
+ target.classList.add('selected-target');
+ selectedGameItem=null;
+ setTimeout(function(){target.classList.remove('selected-target')},350);
+}
+function checkGame(){
+ var items=[].slice.call(document.querySelectorAll('.game-item'));
+ var placed=items.filter(function(i){return i.dataset.placed}).length;
+ var correct=items.filter(function(i){return i.dataset.placed===i.dataset.answer}).length;
+ items.forEach(function(i){
+  i.classList.remove('correct','wrong');
+  if(i.dataset.placed) i.classList.add(i.dataset.placed===i.dataset.answer?'correct':'wrong');
+ });
+ var msg=document.getElementById('gameResult');
+ if(placed<items.length){
+  msg.textContent='📌 Hubungkan semua objek terlebih dahulu.';
+  msg.className='game-result wrong';
+ }else if(correct===items.length){
+  msg.textContent='🎉 Hebat! Semua jawaban benar!';
+  msg.className='game-result correct';
+ }else{
+  msg.textContent='💡 Ada '+(items.length-correct)+' jawaban yang perlu diperbaiki.';
+  msg.className='game-result wrong';
+ }
+}
+function resetGame(){
+ document.querySelectorAll('.game-item').forEach(function(i){
+  delete i.dataset.placed;
+  i.classList.remove('selected','placed','correct','wrong');
+ });
+ document.querySelectorAll('.target').forEach(function(t){t.classList.remove('selected-target')});
+ selectedGameItem=null;
+ document.getElementById('gameResult').textContent='';
+}
+function resetLab(){
+ setVals(70,50,30);
+ simulate();
+ ['nama','q1','q2','q3','q4','ref'].forEach(function(id){
+  var el=document.getElementById(id); if(el) el.value='';
+ });
+ document.getElementById('quiz').value='';
+ document.getElementById('quizMsg').textContent='';
+ document.getElementById('saveMsg').textContent='';
+ document.getElementById('inspect').innerHTML='Pilih objek di hutan untuk melihat keterangannya.';
+ resetGame();
+ var first=document.querySelector('nav button');
+ showTab('teori',first);
+}
+simulate();
+</script>
+</body>
+</html>
